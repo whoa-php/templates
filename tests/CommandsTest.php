@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace Whoa\Tests\Templates;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Whoa\Contracts\Commands\IoInterface;
 use Whoa\Contracts\Container\ContainerInterface;
 use Whoa\Contracts\FileSystem\FileSystemInterface;
@@ -51,6 +53,8 @@ class CommandsTest extends TestCase
 
     /**
      * Test `Clean` command.
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
      */
     public function testClean()
     {
@@ -73,6 +77,8 @@ class CommandsTest extends TestCase
 
     /**
      * Test `Create` command.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function testCreate()
     {
@@ -99,6 +105,8 @@ class CommandsTest extends TestCase
 
     /**
      * Test invalid action command.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function testInvalidAction()
     {
@@ -119,13 +127,12 @@ class CommandsTest extends TestCase
 
     /**
      * @param ContainerInterface $container
-     *
      * @return self
      */
     private function addSettingsProvider(ContainerInterface $container): self
     {
         $appConfig = [];
-        $settings  = (new Templates())->get($appConfig);
+        $settings = (new Templates())->get($appConfig);
 
         /** @var Mock $settingsMock */
         $settingsMock = Mockery::mock(SettingsProviderInterface::class);
@@ -138,7 +145,6 @@ class CommandsTest extends TestCase
 
     /**
      * @param ContainerInterface $container
-     *
      * @return self
      */
     private function addFileSystem(ContainerInterface $container): self
@@ -165,9 +171,8 @@ class CommandsTest extends TestCase
 
     /**
      * @param string $action
-     * @param int    $errors
-     * @param int    $writes
-     *
+     * @param int $errors
+     * @param int $writes
      * @return IoInterface
      */
     private function createIo(string $action, int $errors = 0, int $writes = 0): IoInterface

@@ -24,6 +24,7 @@ namespace Whoa\Templates\Commands;
 use Whoa\Contracts\Commands\CommandInterface;
 use Whoa\Contracts\Commands\IoInterface;
 use Whoa\Contracts\FileSystem\FileSystemInterface;
+use Whoa\Contracts\Settings\Packages\TemplatesSettingsInterface;
 use Whoa\Contracts\Settings\SettingsProviderInterface;
 use Whoa\Templates\Contracts\TemplatesCacheInterface;
 use Whoa\Templates\Package\TemplatesSettings;
@@ -39,16 +40,16 @@ class TemplatesCommand implements CommandInterface
     /**
      * Command name.
      */
-    const NAME = 'w:templates';
+    public const NAME = 'w:templates';
 
     /** Argument name */
-    const ARG_ACTION = 'action';
+    public const ARG_ACTION = 'action';
 
     /** Command action */
-    const ACTION_CLEAR_CACHE = 'clear-cache';
+    public const ACTION_CLEAR_CACHE = 'clear-cache';
 
     /** Command action */
-    const ACTION_CREATE_CACHE = 'cache';
+    public const ACTION_CREATE_CACHE = 'cache';
 
     /**
      * @inheritdoc
@@ -84,9 +85,9 @@ class TemplatesCommand implements CommandInterface
 
         return [
             [
-                static::ARGUMENT_NAME        => static::ARG_ACTION,
+                static::ARGUMENT_NAME => static::ARG_ACTION,
                 static::ARGUMENT_DESCRIPTION => "Action such as `$cache` or `$clear`.",
-                static::ARGUMENT_MODE        => static::ARGUMENT_MODE__REQUIRED,
+                static::ARGUMENT_MODE => static::ARGUMENT_MODE__REQUIRED,
             ],
         ];
     }
@@ -101,8 +102,10 @@ class TemplatesCommand implements CommandInterface
 
     /**
      * @inheritdoc
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @param ContainerInterface $container
+     * @param IoInterface $inOut
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public static function execute(ContainerInterface $container, IoInterface $inOut): void
     {
@@ -121,18 +124,16 @@ class TemplatesCommand implements CommandInterface
     }
 
     /**
-     * @param IoInterface        $inOut
+     * @param IoInterface $inOut
      * @param ContainerInterface $container
-     *
      * @return void
-     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     protected function executeClear(IoInterface $inOut, ContainerInterface $container): void
     {
-        $settings    = $this->getTemplatesSettings($container);
-        $cacheFolder = $settings[TemplatesSettings::KEY_CACHE_FOLDER];
+        $settings = $this->getTemplatesSettings($container);
+        $cacheFolder = $settings[TemplatesSettingsInterface::KEY_CACHE_FOLDER];
 
         /** @var FileSystemInterface $fileSystem */
         $fileSystem = $container->get(FileSystemInterface::class);
@@ -144,11 +145,9 @@ class TemplatesCommand implements CommandInterface
     }
 
     /**
-     * @param IoInterface        $inOut
+     * @param IoInterface $inOut
      * @param ContainerInterface $container
-     *
      * @return void
-     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      *
@@ -159,8 +158,8 @@ class TemplatesCommand implements CommandInterface
         /** @var TemplatesCacheInterface $cache */
         $cache = $container->get(TemplatesCacheInterface::class);
 
-        $settings  = $this->getTemplatesSettings($container);
-        $templates = $settings[TemplatesSettings::KEY_TEMPLATES_LIST];
+        $settings = $this->getTemplatesSettings($container);
+        $templates = $settings[TemplatesSettingsInterface::KEY_TEMPLATES_LIST];
 
         foreach ($templates as $templateName) {
             // it will write template to cache
@@ -180,16 +179,12 @@ class TemplatesCommand implements CommandInterface
 
     /**
      * @param ContainerInterface $container
-     *
      * @return array
-     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     protected function getTemplatesSettings(ContainerInterface $container): array
     {
-        $tplConfig = $container->get(SettingsProviderInterface::class)->get(TemplatesSettings::class);
-
-        return $tplConfig;
+        return $container->get(SettingsProviderInterface::class)->get(TemplatesSettings::class);
     }
 }

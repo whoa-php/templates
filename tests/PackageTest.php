@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace Whoa\Tests\Templates;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Whoa\Contracts\Settings\Packages\TemplatesSettingsInterface;
 use Whoa\Contracts\Settings\SettingsProviderInterface;
 use Whoa\Contracts\Templates\TemplatesInterface;
 use Whoa\Templates\Contracts\TemplatesCacheInterface;
@@ -50,11 +53,13 @@ class PackageTest extends TestCase
 
     /**
      * Test ContainerConfigurator.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function testContainerConfigurator()
     {
         $appConfig = [];
-        $settings  = (new Templates())->get($appConfig);
+        $settings = (new Templates())->get($appConfig);
 
         /** @var Mock $settingsMock */
         $settingsMock = Mockery::mock(SettingsProviderInterface::class);
@@ -88,12 +93,12 @@ class PackageTest extends TestCase
     public function testSettings()
     {
         $appConfig = [];
-        $settings  = (new Templates())->get($appConfig);
+        $settings = (new Templates())->get($appConfig);
 
-        $this->assertNotEmpty($settings[Templates::KEY_CACHE_FOLDER]);
-        $this->assertNotEmpty($settings[Templates::KEY_TEMPLATES_FOLDER]);
+        $this->assertNotEmpty($settings[TemplatesSettingsInterface::KEY_CACHE_FOLDER]);
+        $this->assertNotEmpty($settings[TemplatesSettingsInterface::KEY_TEMPLATES_FOLDER]);
 
         $sampleTemplatePath = 'Samples' . DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR . 'test.html.twig';
-        $this->assertEquals([$sampleTemplatePath], $settings[Templates::KEY_TEMPLATES_LIST]);
+        $this->assertEquals([$sampleTemplatePath], $settings[TemplatesSettingsInterface::KEY_TEMPLATES_LIST]);
     }
 }

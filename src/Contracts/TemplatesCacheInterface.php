@@ -28,7 +28,6 @@ interface TemplatesCacheInterface
 {
     /**
      * Cache template by name.
-     *
      * @param string $name
      */
     public function cache(string $name): void;

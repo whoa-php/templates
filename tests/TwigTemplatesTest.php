@@ -88,7 +88,6 @@ class TwigTemplatesTest extends TestCase
 
     /**
      * Test render.
-     *
      * @throws LoaderError
      * @throws SyntaxError
      * @throws RuntimeError
@@ -119,7 +118,6 @@ class TwigTemplatesTest extends TestCase
 
     /**
      * Test render.
-     *
      * @throws LoaderError
      * @throws SyntaxError
      */
@@ -145,7 +143,7 @@ class TwigTemplatesTest extends TestCase
 
         $templates->cache($templateName);
 
-        // mocks does the checks
+        // mocks do the checks
         $this->assertTrue(true);
     }
 }

@@ -37,14 +37,14 @@ class TwigTemplates implements TemplatesInterface, TemplatesCacheInterface
     /**
      * @var Environment
      */
-    private $twig;
+    private Environment $twig;
 
     /**
-     * @param string      $appRootFolder
-     * @param string      $templatesFolder
+     * @param string $appRootFolder
+     * @param string $templatesFolder
      * @param null|string $cacheFolder
-     * @param bool        $isDebug
-     * @param bool        $isAutoReload
+     * @param bool $isDebug
+     * @param bool $isAutoReload
      */
     public function __construct(
         string $appRootFolder,
@@ -55,8 +55,8 @@ class TwigTemplates implements TemplatesInterface, TemplatesCacheInterface
     ) {
         // For Twig options see http://twig.sensiolabs.org/doc/api.html
         $options = [
-            'debug'       => $isDebug,
-            'cache'       => $cacheFolder === null ? false : $cacheFolder,
+            'debug' => $isDebug,
+            'cache' => $cacheFolder === null ? false : $cacheFolder,
             'auto_reload' => $isAutoReload,
         ];
 
@@ -73,10 +73,8 @@ class TwigTemplates implements TemplatesInterface, TemplatesCacheInterface
 
     /**
      * @param string $name
-     * @param array  $context
-     *
+     * @param array $context
      * @return string
-     *
      * @throws LoaderError
      * @throws SyntaxError
      * @throws RuntimeError
@@ -88,7 +86,6 @@ class TwigTemplates implements TemplatesInterface, TemplatesCacheInterface
 
     /**
      * @param string $name
-     *
      * @throws LoaderError
      * @throws SyntaxError
      */

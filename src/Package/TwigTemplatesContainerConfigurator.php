@@ -23,6 +23,7 @@ namespace Whoa\Templates\Package;
 
 use Whoa\Contracts\Application\ContainerConfiguratorInterface;
 use Whoa\Contracts\Container\ContainerInterface as WhoaContainerInterface;
+use Whoa\Contracts\Settings\Packages\TemplatesSettingsInterface;
 use Whoa\Contracts\Settings\SettingsProviderInterface;
 use Whoa\Contracts\Templates\TemplatesInterface;
 use Whoa\Templates\Contracts\TemplatesCacheInterface;
@@ -36,7 +37,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 class TwigTemplatesContainerConfigurator implements ContainerConfiguratorInterface
 {
     /** @var callable */
-    const CONFIGURATOR = [self::class, self::CONTAINER_METHOD_NAME];
+    public const CONFIGURATOR = [self::class, self::CONTAINER_METHOD_NAME];
 
     /**
      * @inheritdoc
@@ -44,16 +45,14 @@ class TwigTemplatesContainerConfigurator implements ContainerConfiguratorInterfa
     public static function configureContainer(WhoaContainerInterface $container): void
     {
         $container[TemplatesInterface::class] = function (PsrContainerInterface $container): TemplatesInterface {
-            $settings  = $container->get(SettingsProviderInterface::class)->get(C::class);
-            $templates = new TwigTemplates(
-                $settings[C::KEY_APP_ROOT_FOLDER],
-                $settings[C::KEY_TEMPLATES_FOLDER],
-                $settings[C::KEY_CACHE_FOLDER] ?? null,
-                $settings[C::KEY_IS_DEBUG] ?? false,
-                $settings[C::KEY_IS_AUTO_RELOAD] ?? false
+            $settings = $container->get(SettingsProviderInterface::class)->get(C::class);
+            return new TwigTemplates(
+                $settings[TemplatesSettingsInterface::KEY_APP_ROOT_FOLDER],
+                $settings[TemplatesSettingsInterface::KEY_TEMPLATES_FOLDER],
+                $settings[TemplatesSettingsInterface::KEY_CACHE_FOLDER] ?? null,
+                $settings[TemplatesSettingsInterface::KEY_IS_DEBUG] ?? false,
+                $settings[TemplatesSettingsInterface::KEY_IS_AUTO_RELOAD] ?? false
             );
-
-            return $templates;
         };
 
         $container[TemplatesCacheInterface::class] =
